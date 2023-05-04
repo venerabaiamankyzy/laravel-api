@@ -20,7 +20,11 @@ return new class extends Migration
             //       ->references('id')
                         //          ->on('types');
 
-            $table->foreignId('type_id')->nullable()->constrained();
+            $table->foreignId('type_id')
+                ->after('id')
+                ->nullable()                
+                ->constrained()
+                ->nullOnDelete();
         });
     }
 
