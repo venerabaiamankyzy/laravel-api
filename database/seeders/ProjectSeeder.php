@@ -24,11 +24,12 @@ class ProjectSeeder extends Seeder
     public function run(Faker $faker)
     {   
          $types = Type::all()->pluck('id');
+         $types[] = null;
 
         for($i = 0; $i < 40; $i++) {
             $project = new Project;
             $project->type_id = $faker->randomElement($types);
-            $project->title = $faker->catchPhrase();
+            $project->title = $faker->catchPhrase(2);
             $project->slug = Str::of($project->title)->slug('-');
             // $project->image = "https://picsum.photos/200/300";
             $project->text = $faker->text(90);
