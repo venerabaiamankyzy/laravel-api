@@ -48,6 +48,10 @@
               Type
             </th>
 
+            <th scope="col">
+              Technology
+            </th>
+
             
             {{-- <th scope="col">
               <a 
@@ -115,6 +119,19 @@
             <th scope="row">{{$project->id}}</th>
             <td>{{ $project->getTitle(10) }}</td>
             <td>{{ $project->type?->label }}</td>
+            <td>
+              @forelse($project->technologies as $technology) 
+              {{ $technology->label }}
+                @if(!$loop->last)
+                  ,
+                @endif
+                {{-- @unless(!$loop->last)
+                  ,
+                @endunless --}}
+              @empty 
+                - 
+              @endforelse
+            </td>
             {{-- <td>{{ $project->slug }}</td> --}}
             {{-- <td>{{ $project->image }}</td> --}}
             <td>{{ $project->getAbstract(15) }}</td>
