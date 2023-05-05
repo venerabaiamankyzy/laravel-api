@@ -33,8 +33,6 @@
               </a>
             </th>
 
-            
-
             <th scope="col">
               <a 
                 href="{{ route('admin.projects.index') }}?sort=title&order={{ $sort == 'title' && $order != 'DESC' ? 'DESC' : 'ASC' }}">Title
@@ -52,7 +50,6 @@
               Technology
             </th>
 
-            
             {{-- <th scope="col">
               <a 
                 href="{{ route('admin.projects.index') }}?sort=slug&order={{ $sort == 'slug' && $order != 'DESC' ? 'DESC' : 'ASC' }}">Slug
@@ -118,18 +115,18 @@
           <tr>
             <th scope="row">{{$project->id}}</th>
             <td>{{ $project->getTitle(10) }}</td>
-            <td>{{ $project->type?->label }}</td>
+            <td>{!! $project->type?->getBadgeHTML() !!}</td>
             <td>
               @forelse($project->technologies as $technology) 
-              {{ $technology->label }}
-                @if(!$loop->last)
+                {!! $technology->getBadgeHTML() !!}
+                {{-- @if(!$loop->last)
                   ,
-                @endif
+                @endif --}}
                 {{-- @unless(!$loop->last)
                   ,
                 @endunless --}}
               @empty 
-                - 
+                  -
               @endforelse
             </td>
             {{-- <td>{{ $project->slug }}</td> --}}
@@ -139,7 +136,6 @@
             <td>{{ $project->created_at }}</td>
             <td>{{ $project->updated_at }}</td>
             
-
             <td class="action-cell">
               <a 
                 href="{{route('admin.projects.show', $project)}}">
@@ -159,6 +155,11 @@
             </td>   
           </tr>   
           @empty  
+          <tr>
+            <td colspan="7">
+              No results
+            </td>
+          </tr>
           @endforelse 
         </tbody>
       </table>       
@@ -167,12 +168,6 @@
     {{ $projects->links('')}}    
 </section>      
 @endsection      
-    
-         
-    
-   
-
- 
 
 @section('modals')
   @forelse ($projects as $project)
