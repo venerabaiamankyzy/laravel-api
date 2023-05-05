@@ -88,12 +88,11 @@
               {{ $type->color }} 
             </td> 
             <td>
-              <span class="badge rounded-pill" style="background-color: {{ $type->color}} ">{{ $type->label }}</span>
+              {!! $type->getBadgeHTML() !!}
             </td>           
             <td>{{ $type->created_at }}</td>
             <td>{{ $type->updated_at }}</td>
             
-
             <td class="action-cell">
               {{-- <a 
                 href="{{route('admin.types.show', $type)}}">
@@ -114,6 +113,11 @@
             </td>   
           </tr>   
           @empty  
+          <tr>
+            <td colspan="7">
+              No results
+            </td>
+          </tr>
           @endforelse 
         </tbody>
       </table>       
@@ -123,12 +127,6 @@
 </section>      
 @endsection      
     
-         
-    
-   
-
- 
-
 @section('modals')
   @forelse ($types as $type)
     <!-- Modal -->
