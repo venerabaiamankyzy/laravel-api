@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Models\Project;
+use App\Models\Technology;
 use App\Models\Type;
 
 use Illuminate\Http\Request;
@@ -44,7 +45,9 @@ class ProjectController extends Controller
     {              
             $project = new Project;
             $types = Type::orderBy('label')->get();
-            return view('admin.projects.form', compact('project', 'types'));
+            $technologies = Technology::orderBy('label')->get();
+            // $project_technologies = [];
+            return view('admin.projects.form', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -62,7 +65,8 @@ class ProjectController extends Controller
             'text'=> 'required|string',
             'image' => 'nullable|image|mimes:jpg,png,jpeg',
             'link'  => 'required|url',
-            'type_id' => 'nullable|exists:types,id'
+            'type_id' => 'nullable|exists:types,id',
+            'technologies' => 'nullable|exists:technologies,id'
             
 
         ],[
@@ -73,7 +77,8 @@ class ProjectController extends Controller
             'image.mimes' => 'Le estensioni accettate per l\'immagine sono jpg,png,jpeg',
             'link.required' => 'Il link è obbligatorio',
             'link.url' => 'Il link deve essere un link valido',
-            'type_id.exists' => 'L\'id del tipo non è valido'
+            'type_id.exists' => 'L\'id del tipo non è valido',
+            'technologies.exists' => 'Le tecnologie selezionate non sono valide'
              
         ]);
         
@@ -92,6 +97,10 @@ class ProjectController extends Controller
         // $project->slug = $project->id . '-' . Str::of($project->title)->slug('-');
         // $project->image = $path; // per salvare nel database il primo metodo
         $project->save();
+
+        //Attach
+        if(Arr::exists($data, "technologies")) 
+            $project->technologies()->attach($data["technologies"]);
 
         return to_route('admin.projects.show', $project)
         ->with('message_content', "Progetto $project->id creato con successo");
@@ -119,7 +128,10 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {   
         $types = Type::orderBy('label')->get();
-        return view('admin.projects.form', compact('project', 'types'));
+        $technologies = Technology::orderBy('label')->get();
+        $project_technologies = $project->technologies->pluck('id')->toArray();
+        // dd($project_technologies);
+        return view('admin.projects.form', compact('project', 'types', 'technologies', 'project_technologies'));
     }
 
     /**
@@ -131,6 +143,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
+        // dd($request->all());
         //validiamo il form
         $request->validate([
             'title' => 'required|string|max:50',
@@ -138,8 +151,8 @@ class ProjectController extends Controller
             'image' => 'nullable|image|mimes:jpg,png,jpeg',
             'link'  => 'required|url',
             'is_published' => 'boolean',
-            'type_id.exists' => 'L\'id del tipo non è valido'
-             
+            'type_id.exists' => 'L\'id del tipo non è valido',
+            'technologies' => 'nullable|exists:technologies,id'
         ],[
             'title.required' => 'Il titolo è obbligatorio',
             'title.string' => 'Il titolo ldeve essere una stringa',
@@ -148,7 +161,8 @@ class ProjectController extends Controller
             'image.mimes' => 'Le estensioni accettate per l\'immagine sono jpg, png, jpeg',
             'link.required' => 'Il link è obbligatorio',
             'link.url' => 'Il link deve essere un link valido',
-            'type_id.exists' => 'L\'id del tipo non è valido'
+            'type_id.exists' => 'L\'id del tipo non è valido',
+            'technologies.exists' => 'Le tecnologie selezionate non sono valide'
             
         ]);
 
@@ -164,11 +178,17 @@ class ProjectController extends Controller
             if($project->image) Storage::delete($project->image);
             $path = Storage::put('uploads/projects', $data['image']);
             $data['image'] = $path;
-        }
+        }    
 
-        // $project->update($request->all()); // riempe e salva
-        $project->fill($data); // solo riempe senza salvare
-        $project->save();
+        $project->update($data); // riempe e salva
+        // $project->fill($data); // solo riempe senza salvare
+        // $project->save();
+
+        //sync
+        if(Arr::exists($data, "technologies")) 
+            $project->technologies()->sync($data["technologies"]);
+        else 
+            $project->technologies()->detach();
 
         return to_route('admin.projects.show', $project)
             ->with('message_content', "Progetto $project->id modificato con successo");
