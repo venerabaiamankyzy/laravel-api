@@ -54,6 +54,7 @@
           </div>  
         </div>
 
+        {{-- checkbox type --}}
         <div class="row mb-3">
           <div class="col-md-2 text-end">
             <label for="type_id"  class="form-label">Type</label>
@@ -70,6 +71,34 @@
           </div>  
         </div>
 
+        {{-- checkbox tecnology --}}
+        <div class="row mb-3">
+          <div class="col-md-2 text-end">
+            <label for="technology"  class="form-label">Type</label>
+          </div>
+
+          <div class="col-md-10">
+              
+            <div class="form-check @error('technologies') is-invalid @enderror p-0">
+             
+              @foreach ($technologies as $technology)            
+                <input type="checkbox" id="technology-{{ $technology->id}}" value="{{ $technology->id}}" name="technologies[]" 
+                class="form-check-control" @if (in_array($technology->id, old('technologies', $project_technologies ?? []))) checked @endif> 
+                {{-- aggingiamo [] al name, technology diventa array --}}
+                <label for="technology-{{ $technology->id}}">{{ $technology->label}}</label>
+                <br> 
+              @endforeach
+            </div> 
+            
+            @error('technology')
+              <div class="invalid-feedback">
+                {{ $messsage }}
+              </div>
+            @enderror
+          </div>  
+        </div>
+
+        {{-- input published --}}
         <div class="row mb-3">
           <div class="col-md-2 text-end">
             <label for="is_published"  class="form-label">Published</label>
