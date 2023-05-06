@@ -15,7 +15,7 @@
       
       <p>
         <strong>Type: </strong>
-        <span class="badge rounded-pill" style="background-color: {{ $type->color}} ">{{ $type->label }}</span>
+        {!! $project->type?->getBadgeHTML() !!}
       </p>  
     </div>
   </section>  
