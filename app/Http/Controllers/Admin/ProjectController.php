@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use App\Models\Project;
-use App\Models\Technology;
 use App\Models\Type;
+use App\Models\Technology;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -248,6 +250,7 @@ class ProjectController extends Controller
         // $id_project = $project->id; // non ci serve piu perche passa gia id
         
         if($project->image) Storage::delete($project->image); //l'immagine elimino solo nel forcedelete
+        $project->technologies()->detach();
         $project->forceDelete();
 
         return to_route('admin.projects.trash')     
