@@ -8,12 +8,11 @@ use App\Models\Project;
 use App\Models\Type;
 use App\Models\Technology;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -62,29 +61,11 @@ class ProjectController extends Controller
     {
         // dd($request->all());
 
-        $request->validate([
-            'title' => 'required|string|max:50',
-            'text'=> 'required|string',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg',
-            'link'  => 'required|url',
-            'type_id' => 'nullable|exists:types,id',
-            'technologies' => 'nullable|exists:technologies,id'
-            
-
-        ],[
-            'title.required' => 'Il titolo è obbligatorio',
-            'title.string' => 'Il titolo ldeve essere una stringa',
-            'title.max' => 'Il titolo puo avere 50 caratteri',
-            'image.image' => 'Il file deve essere un\'immagine',
-            'image.mimes' => 'Le estensioni accettate per l\'immagine sono jpg,png,jpeg',
-            'link.required' => 'Il link è obbligatorio',
-            'link.url' => 'Il link deve essere un link valido',
-            'type_id.exists' => 'L\'id del tipo non è valido',
-            'technologies.exists' => 'Le tecnologie selezionate non sono valide'
-             
-        ]);
         
         $data = $request->all(); 
+
+        $this->validation($data);
+        
         // il storage
         if(Arr::exists( $data, 'image')) {
             $path = Storage::put('uploads/projects', $data['image']);
@@ -147,26 +128,7 @@ class ProjectController extends Controller
     {
         // dd($request->all());
         //validiamo il form
-        $request->validate([
-            'title' => 'required|string|max:50',
-            'text'=> 'required|string',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg',
-            'link'  => 'required|url',
-            'is_published' => 'boolean',
-            'type_id.exists' => 'L\'id del tipo non è valido',
-            'technologies' => 'nullable|exists:technologies,id'
-        ],[
-            'title.required' => 'Il titolo è obbligatorio',
-            'title.string' => 'Il titolo ldeve essere una stringa',
-            'title.max' => 'Il titolo puo avere 50 caratteri',
-            'image.image' => 'Il file deve essere un\'immagine',
-            'image.mimes' => 'Le estensioni accettate per l\'immagine sono jpg, png, jpeg',
-            'link.required' => 'Il link è obbligatorio',
-            'link.url' => 'Il link deve essere un link valido',
-            'type_id.exists' => 'L\'id del tipo non è valido',
-            'technologies.exists' => 'Le tecnologie selezionate non sono valide'
-            
-        ]);
+        $this->validation($request->all());
 
         //Raffiniamo i dati che c'è arrivano per salvare correttamente in DB
         $data = $request->all(); 
@@ -272,5 +234,31 @@ class ProjectController extends Controller
 
         return to_route('admin.projects.index')     
             ->with('message_content', "Project $id ripristinato");
+    }
+
+    private function validation($data) {
+        return Validator::make(
+            $data,
+            [
+                'title' => 'required|string|max:50',
+                'text'=> 'required|string',
+                'image' => 'nullable|image|mimes:jpg,png,jpeg',
+                'link'  => 'required|url',
+                'is_published' => 'boolean',
+                'type_id.exists' => 'L\'id del tipo non è valido',
+                'technologies' => 'nullable|exists:technologies,id'
+            ],
+            [
+                'title.required' => 'Il titolo è obbligatorio',
+                'title.string' => 'Il titolo ldeve essere una stringa',
+                'title.max' => 'Il titolo puo avere 50 caratteri',
+                'image.image' => 'Il file deve essere un\'immagine',
+                'image.mimes' => 'Le estensioni accettate per l\'immagine sono jpg, png, jpeg',
+                'link.required' => 'Il link è obbligatorio',
+                'link.url' => 'Il link deve essere un link valido',
+                'type_id.exists' => 'L\'id del tipo non è valido',
+                'technologies.exists' => 'Le tecnologie selezionate non sono valide'
+            ]
+        )->validate();
     }
 } 
