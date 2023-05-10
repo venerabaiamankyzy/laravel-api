@@ -14,10 +14,12 @@ class Project extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['type_id', 'title', 'image', 'text', 'link', 'is_published' ];
+
+    // protected $with = ['type', 'technology']; //eager loading
     
      //! Relations
 
-     public function technologies() {
+     public function technology() {
         return $this->belongsToMany(Technology::class);
     }
 
