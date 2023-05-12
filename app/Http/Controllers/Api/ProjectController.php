@@ -16,9 +16,9 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::where('is_published', true)
-        ->with('type', 'technology') //lazy loading
+        ->with('type', 'technologies') //lazy loading
         ->orderBY('updated_at', 'DESC')
-        ->get();
+        ->paginate(6);
 
         return response()->json($projects);
     }

@@ -19,7 +19,7 @@ class Project extends Model
     
      //! Relations
 
-     public function technology() {
+     public function technologies() {
         return $this->belongsToMany(Technology::class);
     }
 
@@ -42,11 +42,12 @@ class Project extends Model
     // }
 
     //! Getter
-    public function getAbstract($max = 50) {
+    public function getAbstract($max = 100) {
         return substr($this->text, 0, $max). "...";
     }
+    
 
-    public function getTitle($max = 50) {
+    public function getTitle($max = 20) {
         return substr($this->title, 0, $max). "...";
     }
 
