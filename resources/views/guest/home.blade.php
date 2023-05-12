@@ -23,7 +23,7 @@
 											@else 
 											Untyped           
 											@endif 
-											<p>{{ $recent_project->type->label}}</p>
+											{{-- <p>{{ $recent_project->type->label}}</p> --}}
 									@empty           
                  	@endforelse   
                  @dump($recent_projects)
