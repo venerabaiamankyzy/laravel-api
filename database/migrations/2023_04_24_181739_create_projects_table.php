@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('is_published')->default(0);
             $table->string('slug', 100)->unique();
             $table->string('image')->nullable();
-            $table->string('text', 100);
+            $table->string('text');
             $table->string('link');
             $table->softDeletes();
             $table->timestamps();

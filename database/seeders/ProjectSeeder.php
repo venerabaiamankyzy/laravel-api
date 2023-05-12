@@ -29,10 +29,11 @@ class ProjectSeeder extends Seeder
         for($i = 0; $i < 40; $i++) {
             $project = new Project;
             $project->type_id = $faker->randomElement($types);
-            $project->title = $faker->catchPhrase(2);
+            $project->title = $faker->catchPhrase();
             $project->slug = Str::of($project->title)->slug('-');
             // $project->image = "https://picsum.photos/200/300";
-            $project->text = $faker->text(90);
+            $project->text = $faker->paragraph();
+            $project->is_published = random_int(0, 1);
             $project->link = $faker->url();
             $project->save();
 
